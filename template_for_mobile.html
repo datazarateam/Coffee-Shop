@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>JavaGem – Coffee Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brown: #C67C4E;
+    --peach: #EDD6C8;
+    --dark: #313131;
+    --gray: #E3E3E3;
+    --cream: #F9F2ED;
+    --white: #FFFFFF;
+    --red: #ED3B54;
+    --star: #F5A623;
+    --text-light: #9B9B9B;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px 0;
+  }
+
+  /* PHONE WRAPPER */
+  .phone {
+    width: 390px;
+    min-height: 844px;
+    background: var(--dark);
+    border-radius: 44px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.08);
+  }
+
+  /* SCREENS */
+  .screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: none;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+  .screen.active { display: block; }
+
+  /* STATUS BAR */
+  .statusbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .statusbar-icons { display: flex; gap: 6px; align-items: center; }
+  .statusbar svg { width: 16px; height: 16px; }
+
+  /* ═══════════════════════════════
+     SCREEN 1 — SPLASH
+  ═══════════════════════════════ */
+  #splash {
+    background: var(--dark);
+    height: 844px;
+    overflow: hidden;
+  }
+  .splash-bg {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 65%;
+    background: linear-gradient(160deg, #1a0a00 0%, #3d1f00 40%, #6b3a1f 70%, #c67c4e 100%);
+    overflow: hidden;
+  }
+  .splash-bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 60% 40%, rgba(198,124,78,0.4) 0%, transparent 60%);
+  }
+  .coffee-img {
+    position: absolute; top: -30px; left: 50%;
+    transform: translateX(-50%);
+    width: 340px; height: 380px;
+    background: radial-gradient(circle at 50% 40%, #4a2800 0%, #1a0900 100%);
+    border-radius: 50% 50% 40% 40%;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .coffee-beans {
+    font-size: 120px;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.8));
+    transform: rotate(-15deg);
+  }
+  .splash-cup {
+    width: 200px; height: 200px;
+    background: conic-gradient(from 180deg at 50% 60%, #5a3010, #c67c4e, #8b4a20, #5a3010);
+    border-radius: 10% 10% 50% 50%;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  }
+  .splash-cup::before {
+    content: '';
+    position: absolute; top: 10px; left: 15px; right: 15px; bottom: 20px;
+    background: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.15) 0%, transparent 60%),
+                conic-gradient(from 0deg, #2a1500, #8b4a20, #c67c4e, #8b4a20, #2a1500);
+    border-radius: 5% 5% 45% 45%;
+  }
+  .splash-content {
+    position: relative; z-index: 2;
+    background: var(--dark);
+    border-radius: 32px 32px 0 0;
+    padding: 40px 30px 50px;
+    margin-top: 360px;
+  }
+  .splash-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px; font-weight: 900;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .splash-content p {
+    color: rgba(255,255,255,0.55);
+    font-size: 14px; line-height: 1.6;
+    margin-bottom: 36px;
+  }
+  .btn-primary {
+    display: block; width: 100%;
+    background: var(--brown);
+    color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 16px; font-weight: 600;
+    border: none; border-radius: 16px;
+    padding: 18px; cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 8px 24px rgba(198,124,78,0.4);
+  }
+  .btn-primary:active { transform: scale(0.97); }
+
+  /* ═══════════════════════════════
+     SCREEN 2 — HOME
+  ═══════════════════════════════ */
+  #home { background: var(--dark); }
+  .home-header {
+    padding: 0 24px 20px;
+    background: var(--dark);
+  }
+  .home-header .location-label {
+    font-size: 12px; color: rgba(255,255,255,0.5);
+    margin-bottom: 4px;
+  }
+  .home-header .location-name {
+    font-size: 17px; font-weight: 600; color: white;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .home-header .location-name svg { width: 14px; opacity: 0.7; }
+  .search-row {
+    padding: 0 24px 20px;
+    display: flex; gap: 12px; align-items: center;
+    background: var(--dark);
+  }
+  .search-box {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 10px;
+    color: rgba(255,255,255,0.4);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .search-box svg { width: 18px; opacity: 0.5; flex-shrink: 0; }
+  .filter-btn {
+    width: 52px; height: 52px;
+    background: var(--brown);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(198,124,78,0.4);
+  }
+  .filter-btn svg { width: 20px; }
+  
+  /* Promo Banner */
+  .promo-banner {
+    margin: 0 24px 24px;
+    background: var(--brown);
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    min-height: 140px;
+  }
+  .promo-banner::before {
+    content: '';
+    position: absolute; top: -20px; right: -20px;
+    width: 160px; height: 160px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  .promo-badge {
+    display: inline-block;
+    background: var(--red);
+    color: white; font-size: 12px; font-weight: 700;
+    padding: 4px 12px; border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  .promo-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 900;
+    color: white; line-height: 1.1;
+    max-width: 55%;
+  }
+  .promo-cup {
+    position: absolute; right: 16px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 80px;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  }
+
+  /* Categories */
+  .categories {
+    padding: 0 24px 20px;
+    display: flex; gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .categories::-webkit-scrollbar { display: none; }
+  .cat-pill {
+    flex-shrink: 0;
+    padding: 9px 20px;
+    border-radius: 30px;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1.5px solid transparent;
+  }
+  .cat-pill.active {
+    background: var(--brown);
+    color: white;
+    box-shadow: 0 4px 12px rgba(198,124,78,0.35);
+  }
+  .cat-pill.inactive {
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.6);
+    border-color: rgba(255,255,255,0.1);
+  }
+
+  /* Home body - light section */
+  .home-body {
+    background: var(--cream);
+    border-radius: 28px 28px 0 0;
+    min-height: 450px;
+    padding: 24px 24px 100px;
+  }
+  .coffee-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .coffee-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    transition: transform 0.2s;
+  }
+  .coffee-card:active { transform: scale(0.97); }
+  .coffee-card-img {
+    height: 130px;
+    position: relative;
+    overflow: hidden;
+    background: var(--dark);
+  }
+  .coffee-card-img .rating-badge {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(4px);
+    color: white; font-size: 11px; font-weight: 600;
+    padding: 3px 8px; border-radius: 8px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .coffee-card-img .rating-badge::before {
+    content: '★'; color: var(--star); font-size: 12px;
+  }
+  .coffee-emoji {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 60px;
+    background: linear-gradient(135deg, #1a0900 0%, #4a2200 100%);
+  }
+  .coffee-card-info {
+    padding: 12px 14px;
+  }
+  .coffee-card-info h3 {
+    font-size: 15px; font-weight: 700; color: var(--dark);
+    margin-bottom: 2px;
+  }
+  .coffee-card-info .sub {
+    font-size: 12px; color: var(--text-light); margin-bottom: 10px;
+  }
+  .coffee-card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .price { font-size: 17px; font-weight: 700; color: var(--dark); }
+  .add-btn {
+    width: 36px; height: 36px;
+    background: var(--brown);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 20px; color: white; font-weight: 300;
+    box-shadow: 0 4px 12px rgba(198,124,78,0.4);
+    transition: transform 0.15s;
+  }
+  .add-btn:active { transform: scale(0.9); }
+
+  /* Bottom Nav */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 390px;
+    background: var(--dark);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; justify-content: space-around;
+    padding: 16px 0 28px;
+    z-index: 100;
+  }
+  .nav-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    cursor: pointer; padding: 4px 20px;
+    position: relative;
+  }
+  .nav-item svg { width: 24px; height: 24px; }
+  .nav-item.active svg { color: var(--brown); }
+  .nav-item.active::after {
+    content: '';
+    position: absolute; bottom: -4px;
+    width: 6px; height: 6px;
+    background: var(--brown);
+    border-radius: 50%;
+  }
+  .nav-item:not(.active) svg { color: rgba(255,255,255,0.35); }
+
+  /* ═══════════════════════════════
+     SCREEN 3 — DETAIL
+  ═══════════════════════════════ */
+  #detail { background: var(--cream); }
+  .detail-header {
+    padding: 14px 24px 16px;
+    background: var(--cream);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .back-btn, .fav-btn {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: none;
+    color: var(--dark);
+  }
+  .detail-header h2 {
+    font-size: 17px; font-weight: 600; color: var(--dark);
+  }
+  .detail-hero {
+    margin: 0 24px 24px;
+    border-radius: 24px;
+    overflow: hidden;
+    height: 220px;
+    background: linear-gradient(135deg, #1a0900 0%, #4a2200 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 120px;
+    position: relative;
+  }
+  .detail-body { padding: 0 24px; }
+  .detail-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 700;
+    color: var(--dark); margin-bottom: 4px;
+  }
+  .detail-sub { font-size: 14px; color: var(--text-light); margin-bottom: 12px; }
+  .detail-meta {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .detail-rating {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 15px; font-weight: 600; color: var(--dark);
+  }
+  .detail-rating::before { content: '★'; color: var(--star); font-size: 18px; }
+  .detail-rating span { font-size: 13px; color: var(--text-light); font-weight: 400; }
+  .detail-icons { display: flex; gap: 10px; }
+  .icon-chip {
+    width: 44px; height: 44px;
+    background: var(--peach);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    color: var(--brown);
+  }
+  .divider { height: 1px; background: var(--gray); margin: 20px 0; }
+  .section-title {
+    font-size: 17px; font-weight: 700; color: var(--dark);
+    margin-bottom: 10px;
+  }
+  .desc-text {
+    font-size: 14px; color: var(--text-light); line-height: 1.7;
+    margin-bottom: 4px;
+  }
+  .read-more { color: var(--brown); font-weight: 600; cursor: pointer; font-size: 14px; }
+  .size-options {
+    display: flex; gap: 12px; margin-bottom: 30px;
+  }
+  .size-btn {
+    flex: 1; padding: 14px;
+    border-radius: 14px;
+    border: 1.5px solid var(--gray);
+    background: white;
+    font-size: 15px; font-weight: 600;
+    color: var(--dark); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .size-btn.active {
+    border-color: var(--brown);
+    background: var(--peach);
+    color: var(--brown);
+  }
+  .detail-footer {
+    display: flex; align-items: center;
+    gap: 20px; padding: 20px 24px 40px;
+    background: var(--cream);
+    position: sticky; bottom: 0;
+    border-top: 1px solid var(--gray);
+  }
+  .price-label { font-size: 12px; color: var(--text-light); margin-bottom: 2px; }
+  .price-big { font-size: 24px; font-weight: 700; color: var(--brown); }
+
+  /* ═══════════════════════════════
+     SCREEN 4 — ORDER
+  ═══════════════════════════════ */
+  #order { background: var(--cream); }
+  .order-header {
+    padding: 14px 24px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--cream);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .order-tabs {
+    display: flex; background: white;
+    border-radius: 14px; padding: 4px;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .order-tab {
+    padding: 10px 28px; border-radius: 10px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    color: var(--text-light);
+  }
+  .order-tab.active {
+    background: var(--brown);
+    color: white;
+    box-shadow: 0 4px 12px rgba(198,124,78,0.35);
+  }
+  .order-body { padding: 0 24px 40px; }
+  .order-section { margin-bottom: 24px; }
+  .order-section-title {
+    font-size: 17px; font-weight: 700; color: var(--dark);
+    margin-bottom: 14px;
+  }
+  .address-card {
+    background: white; border-radius: 16px;
+    padding: 16px; margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .address-card .addr-name {
+    font-size: 15px; font-weight: 600; color: var(--dark);
+    margin-bottom: 4px;
+  }
+  .address-card .addr-detail {
+    font-size: 13px; color: var(--text-light); margin-bottom: 12px;
+  }
+  .addr-actions { display: flex; gap: 10px; }
+  .addr-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 10px;
+    border: 1.5px solid var(--gray);
+    background: white;
+    font-size: 12px; font-weight: 500; color: var(--dark);
+    cursor: pointer;
+  }
+  .item-row {
+    background: white; border-radius: 16px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .item-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: var(--dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; flex-shrink: 0;
+  }
+  .item-info { flex: 1; }
+  .item-info h4 { font-size: 15px; font-weight: 600; color: var(--dark); }
+  .item-info .item-sub { font-size: 12px; color: var(--text-light); }
+  .item-chevron { color: var(--text-light); font-size: 18px; }
+  .discount-row {
+    background: white; border-radius: 14px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .disc-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--peach);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .disc-text { flex: 1; font-size: 14px; font-weight: 500; color: var(--dark); }
+  .payment-card {
+    background: white; border-radius: 16px;
+    padding: 20px; margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .payment-title {
+    font-size: 16px; font-weight: 700; color: var(--dark);
+    margin-bottom: 16px;
+  }
+  .payment-row {
+    display: flex; justify-content: space-between;
+    font-size: 14px; margin-bottom: 10px;
+    color: var(--text-light);
+  }
+  .payment-row .val { color: var(--dark); font-weight: 500; }
+  .payment-row .strike { text-decoration: line-through; color: var(--text-light); }
+  .payment-row .discount-val { color: var(--brown); font-weight: 600; }
+  .payment-method {
+    background: white; border-radius: 16px;
+    padding: 16px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .pay-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--peach);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .pay-info { flex: 1; }
+  .pay-info .pay-method { font-size: 14px; font-weight: 600; color: var(--dark); }
+  .pay-info .pay-amount { font-size: 13px; color: var(--text-light); }
+
+  /* ═══════════════════════════════
+     SCREEN 5 — TRACKING
+  ═══════════════════════════════ */
+  #tracking { background: var(--cream); }
+  .tracking-header {
+    padding: 14px 24px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--cream);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .map-container {
+    margin: 0 24px 20px;
+    height: 260px;
+    background: #e8e0d8;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+  }
+  /* Fake map grid */
+  .map-grid {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(rgba(180,170,155,0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(180,170,155,0.4) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-color: #ede8e0;
+  }
+  .map-road-h {
+    position: absolute;
+    left: 0; right: 0;
+    height: 28px; background: white;
+    border-radius: 4px;
+  }
+  .map-road-v {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 28px; background: white;
+    border-radius: 4px;
+  }
+  .map-route {
+    position: absolute;
+    border: 3px solid var(--brown);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+  .map-pin {
+    position: absolute;
+    font-size: 28px;
+    transform: translate(-50%, -100%);
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+  }
+  .settings-btn {
+    position: absolute; top: 14px; right: 14px;
+    width: 40px; height: 40px;
+    background: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .tracking-card {
+    margin: 0 24px;
+    background: white; border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  }
+  .tracking-time {
+    font-size: 24px; font-weight: 800; color: var(--dark);
+    margin-bottom: 4px;
+  }
+  .tracking-dest {
+    font-size: 14px; color: var(--text-light); margin-bottom: 20px;
+  }
+  .progress-bar {
+    height: 6px; background: var(--gray);
+    border-radius: 3px; margin-bottom: 24px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--brown), #e8935a);
+    border-radius: 3px;
+    width: 70%;
+    animation: progressAnim 2s ease-out forwards;
+  }
+  @keyframes progressAnim {
+    from { width: 0; } to { width: 70%; }
+  }
+  .status-steps {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .status-step {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .step-dot {
+    width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+  }
+  .step-dot.done { background: var(--brown); }
+  .step-dot.current {
+    background: var(--brown);
+    box-shadow: 0 0 0 4px rgba(198,124,78,0.2);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(198,124,78,0.2); }
+    50% { box-shadow: 0 0 0 8px rgba(198,124,78,0.1); }
+  }
+  .step-dot.pending { background: var(--gray); }
+  .step-info h4 { font-size: 15px; font-weight: 600; color: var(--dark); }
+  .step-info p { font-size: 12px; color: var(--text-light); }
+  .driver-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 20px; padding-top: 20px;
+    border-top: 1px solid var(--gray);
+  }
+  .driver-avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, #c67c4e, #8b4a20);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; overflow: hidden;
+  }
+  .driver-info { flex: 1; }
+  .driver-info h4 { font-size: 15px; font-weight: 600; color: var(--dark); }
+  .driver-info p { font-size: 12px; color: var(--text-light); }
+  .call-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--peach);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; cursor: pointer;
+    color: var(--brown);
+  }
+
+  /* ANIMATIONS */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .screen.animating > * {
+    animation: slideUp 0.3s ease forwards;
+  }
+
+  /* SCROLL indicator dots */
+  .screen-dots {
+    position: fixed; right: 16px; top: 50%;
+    transform: translateX(calc(-50% + 211px)) translateY(-50%);
+    display: flex; flex-direction: column; gap: 8px;
+    z-index: 200;
+  }
+  .screen-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .screen-dot.active {
+    background: var(--brown);
+    transform: scale(1.4);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION DOTS -->
+<div class="screen-dots">
+  <div class="screen-dot active" onclick="goTo('splash')"></div>
+  <div class="screen-dot" onclick="goTo('home')"></div>
+  <div class="screen-dot" onclick="goTo('detail')"></div>
+  <div class="screen-dot" onclick="goTo('order')"></div>
+  <div class="screen-dot" onclick="goTo('tracking')"></div>
+</div>
+
+<div class="phone">
+
+  <!-- ══════════ SCREEN 1: SPLASH ══════════ -->
+  <div id="splash" class="screen active">
+    <div class="splash-bg">
+      <div class="coffee-img">
+        <span style="font-size:200px; margin-top:40px;">☕</span>
+      </div>
+    </div>
+    <div class="splash-content">
+      <h1>Fall in Love with Coffee in Blissful Delight!</h1>
+      <p>Welcome to our cozy coffee corner, where every cup is a delightful for you.</p>
+      <button class="btn-primary" onclick="goTo('home')">Get Started</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SCREEN 2: HOME ══════════ -->
+  <div id="home" class="screen">
+    <!-- Status bar -->
+    <div class="statusbar" style="background:var(--dark);color:white;">
+      <span>9:41</span>
+      <div class="statusbar-icons">
+        <svg viewBox="0 0 24 24" fill="white"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24" fill="white"><rect x="2" y="7" width="20" height="11" rx="2" fill="none" stroke="white" stroke-width="2"/><rect x="4" y="9" width="14" height="7" rx="1" fill="white"/><path d="M22 11v3" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    
+    <div class="home-header">
+      <div class="location-label">Location</div>
+      <div class="location-name">Bilzen, Tanjungbalai
+        <svg viewBox="0 0 24 24" fill="white"><path d="M7 10l5 5 5-5z"/></svg>
+      </div>
+    </div>
+
+    <div class="search-row">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Search coffee
+      </div>
+      <div class="filter-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" width="22"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/><circle cx="4" cy="12" r="2" fill="white"/><circle cx="8" cy="18" r="2" fill="white"/></svg>
+      </div>
+    </div>
+
+    <div class="promo-banner" onclick="goTo('detail')">
+      <div class="promo-badge">Promo</div>
+      <div class="promo-title">Buy one get one FREE</div>
+      <div class="promo-cup">☕</div>
+    </div>
+
+    <div class="categories">
+      <div class="cat-pill active" onclick="setCat(this)">All Coffee</div>
+      <div class="cat-pill inactive" onclick="setCat(this)">Machiato</div>
+      <div class="cat-pill inactive" onclick="setCat(this)">Latte</div>
+      <div class="cat-pill inactive" onclick="setCat(this)">Americano</div>
+      <div class="cat-pill inactive" onclick="setCat(this)">Espresso</div>
+    </div>
+
+    <div class="home-body">
+      <div class="coffee-grid">
+        <!-- Card 1 -->
+        <div class="coffee-card" onclick="goTo('detail')">
+          <div class="coffee-card-img">
+            <div class="coffee-emoji">☕</div>
+            <div class="rating-badge">4.8</div>
+          </div>
+          <div class="coffee-card-info">
+            <h3>Caffe Mocha</h3>
+            <div class="sub">Deep Foam</div>
+            <div class="coffee-card-footer">
+              <div class="price">$ 4.53</div>
+              <div class="add-btn" onclick="event.stopPropagation()">+</div>
+            </div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="coffee-card" onclick="goTo('detail')">
+          <div class="coffee-card-img" style="background:linear-gradient(135deg,#3d2000,#8b5a20);">
+            <div class="coffee-emoji">🍵</div>
+            <div class="rating-badge">4.8</div>
+          </div>
+          <div class="coffee-card-info">
+            <h3>Flat White</h3>
+            <div class="sub">Espresso</div>
+            <div class="coffee-card-footer">
+              <div class="price">$ 3.53</div>
+              <div class="add-btn" onclick="event.stopPropagation()">+</div>
+            </div>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="coffee-card" onclick="goTo('detail')">
+          <div class="coffee-card-img" style="background:linear-gradient(135deg,#2d1500,#7a3a10);">
+            <div class="coffee-emoji">🥤</div>
+            <div class="rating-badge">4.7</div>
+          </div>
+          <div class="coffee-card-info">
+            <h3>Cappuccino</h3>
+            <div class="sub">Classic</div>
+            <div class="coffee-card-footer">
+              <div class="price">$ 3.99</div>
+              <div class="add-btn" onclick="event.stopPropagation()">+</div>
+            </div>
+          </div>
+        </div>
+        <!-- Card 4 -->
+        <div class="coffee-card" onclick="goTo('detail')">
+          <div class="coffee-card-img" style="background:linear-gradient(135deg,#1a0f00,#5a3a00);">
+            <div class="coffee-emoji">☕</div>
+            <div class="rating-badge">4.9</div>
+          </div>
+          <div class="coffee-card-info">
+            <h3>Americano</h3>
+            <div class="sub">Bold & Strong</div>
+            <div class="coffee-card-footer">
+              <div class="price">$ 2.99</div>
+              <div class="add-btn" onclick="event.stopPropagation()">+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </div>
+      <div class="nav-item" onclick="goTo('detail')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <div class="nav-item" onclick="goTo('order')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      </div>
+      <div class="nav-item" onclick="goTo('tracking')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SCREEN 3: DETAIL ══════════ -->
+  <div id="detail" class="screen">
+    <div class="statusbar" style="background:var(--cream);color:var(--dark);">
+      <span>9:41</span>
+      <div class="statusbar-icons">
+        <svg viewBox="0 0 24 24" fill="var(--dark)"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24" fill="var(--dark)"><rect x="2" y="7" width="20" height="11" rx="2" fill="none" stroke="var(--dark)" stroke-width="2"/><rect x="4" y="9" width="14" height="7" rx="1" fill="var(--dark)"/></svg>
+      </div>
+    </div>
+    
+    <div class="detail-header">
+      <button class="back-btn" onclick="goTo('home')">←</button>
+      <h2>Detail</h2>
+      <button class="fav-btn">♡</button>
+    </div>
+
+    <div class="detail-hero">☕</div>
+
+    <div class="detail-body">
+      <div class="detail-name">Caffe Mocha</div>
+      <div class="detail-sub">Ice/Hot</div>
+      <div class="detail-meta">
+        <div class="detail-rating">4.8 <span>(230)</span></div>
+        <div class="detail-icons">
+          <div class="icon-chip">🚴</div>
+          <div class="icon-chip">☕</div>
+          <div class="icon-chip">🧊</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="section-title">Description</div>
+      <div class="desc-text">
+        A cappuccino is an approximately 150 ml (5 oz) beverage, with 25 ml of espresso coffee and 85ml of fresh milk the fo… <span class="read-more">Read More</span>
+      </div>
+      <div class="divider"></div>
+      <div class="section-title">Size</div>
+      <div class="size-options">
+        <button class="size-btn" onclick="selectSize(this)">S</button>
+        <button class="size-btn active" onclick="selectSize(this)">M</button>
+        <button class="size-btn" onclick="selectSize(this)">L</button>
+      </div>
+    </div>
+
+    <div class="detail-footer">
+      <div>
+        <div class="price-label">Price</div>
+        <div class="price-big">$ 4.53</div>
+      </div>
+      <button class="btn-primary" style="flex:1" onclick="goTo('order')">Buy Now</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SCREEN 4: ORDER ══════════ -->
+  <div id="order" class="screen">
+    <div class="statusbar" style="background:var(--cream);color:var(--dark);">
+      <span>9:41</span>
+      <div class="statusbar-icons">
+        <svg viewBox="0 0 24 24" fill="var(--dark)"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24" fill="var(--dark)"><rect x="2" y="7" width="20" height="11" rx="2" fill="none" stroke="var(--dark)" stroke-width="2"/><rect x="4" y="9" width="14" height="7" rx="1" fill="var(--dark)"/></svg>
+      </div>
+    </div>
+    
+    <div class="order-header">
+      <button class="back-btn" onclick="goTo('detail')">←</button>
+      <h2>Order</h2>
+      <div style="width:42px"></div>
+    </div>
+
+    <div style="padding:0 24px 20px;">
+      <div class="order-tabs">
+        <div class="order-tab active" onclick="switchTab(this)">Deliver</div>
+        <div class="order-tab" onclick="switchTab(this)">Pick Up</div>
+      </div>
+    </div>
+
+    <div class="order-body">
+      <div class="order-section">
+        <div class="order-section-title">Delivery Address</div>
+        <div class="address-card">
+          <div class="addr-name">Jl. Kpg Sutoyo</div>
+          <div class="addr-detail">Kpg. Sutoyo No.620, Bilzen, Tanjungbalai</div>
+          <div class="addr-actions">
+            <div class="addr-btn">✏️ Edit Address</div>
+            <div class="addr-btn">📝 Add Note</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-section">
+        <div class="item-row">
+          <div class="item-icon">☕</div>
+          <div class="item-info">
+            <h4>Caffe Mocha</h4>
+            <div class="item-sub">Deep Foam</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;color:var(--dark);font-weight:600;">
+            <span style="color:var(--text-light);cursor:pointer;">−</span>
+            <span>1</span>
+            <span style="color:var(--brown);cursor:pointer;">+</span>
+          </div>
+          <div class="item-chevron">›</div>
+        </div>
+
+        <div class="discount-row">
+          <div class="disc-icon">🏷️</div>
+          <div class="disc-text">1 Discount is Applies</div>
+          <div style="color:var(--text-light);">›</div>
+        </div>
+      </div>
+
+      <div class="payment-card">
+        <div class="payment-title">Payment Summary</div>
+        <div class="payment-row">
+          <span>Price</span>
+          <span class="val">$ 4.53</span>
+        </div>
+        <div class="payment-row">
+          <span>Delivery Fee</span>
+          <span><span class="strike">$2.0</span> &nbsp;<span class="discount-val">$1.0</span></span>
+        </div>
+      </div>
+
+      <div class="payment-method">
+        <div class="pay-icon">💳</div>
+        <div class="pay-info">
+          <div class="pay-method">Cash/Wallet</div>
+          <div class="pay-amount">$ 5.53</div>
+        </div>
+        <div style="color:var(--text-light);">⌄</div>
+      </div>
+
+      <button class="btn-primary" onclick="goTo('tracking')">Order</button>
+    </div>
+  </div>
+
+  <!-- ══════════ SCREEN 5: TRACKING ══════════ -->
+  <div id="tracking" class="screen">
+    <div class="statusbar" style="background:var(--cream);color:var(--dark);">
+      <span>9:41</span>
+      <div class="statusbar-icons">
+        <svg viewBox="0 0 24 24" fill="var(--dark)"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24" fill="var(--dark)"><rect x="2" y="7" width="20" height="11" rx="2" fill="none" stroke="var(--dark)" stroke-width="2"/><rect x="4" y="9" width="14" height="7" rx="1" fill="var(--dark)"/></svg>
+      </div>
+    </div>
+    
+    <div class="tracking-header">
+      <button class="back-btn" onclick="goTo('order')">←</button>
+      <h2>Tracking Order</h2>
+      <div style="width:42px"></div>
+    </div>
+
+    <!-- Map -->
+    <div class="map-container">
+      <div class="map-grid"></div>
+      <!-- Roads -->
+      <div class="map-road-h" style="top:80px;"></div>
+      <div class="map-road-h" style="top:150px;"></div>
+      <div class="map-road-h" style="top:210px;"></div>
+      <div class="map-road-v" style="left:60px;"></div>
+      <div class="map-road-v" style="left:140px;"></div>
+      <div class="map-road-v" style="left:240px;"></div>
+      <div class="map-road-v" style="left:320px;"></div>
+      <!-- Route -->
+      <svg style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;" viewBox="0 0 342 260">
+        <polyline points="60,210 60,80 240,80 240,150 320,150" 
+          fill="none" stroke="#C67C4E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+          stroke-dasharray="6,4"/>
+      </svg>
+      <!-- Pins -->
+      <div class="map-pin" style="left:62px;top:212px;">📍</div>
+      <div class="map-pin" style="left:322px;top:152px;">🏠</div>
+      <div class="settings-btn">⚙️</div>
+    </div>
+
+    <!-- Tracking Card -->
+    <div class="tracking-card">
+      <div class="tracking-time">10 minutes left</div>
+      <div class="tracking-dest">Delivery to Jl. Kpg Sutoyo</div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+
+      <div class="status-steps">
+        <div class="status-step">
+          <div class="step-dot done"></div>
+          <div class="step-info">
+            <h4>Your Order Placed</h4>
+            <p>We will deliver your goods to you</p>
+          </div>
+        </div>
+        <div class="status-step">
+          <div class="step-dot current"></div>
+          <div class="step-info">
+            <h4>Delivered your order</h4>
+            <p>We will deliver your goods to you to the address entered</p>
+          </div>
+        </div>
+        <div class="status-step">
+          <div class="step-dot pending"></div>
+          <div class="step-info" style="opacity:0.5;">
+            <h4>Order received</h4>
+            <p>Enjoy your coffee!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="driver-row">
+        <div class="driver-avatar">👨‍🍳</div>
+        <div class="driver-info">
+          <h4>Brooklyn Simmons</h4>
+          <p>⭐ 4.9 · Coffee Rider</p>
+        </div>
+        <div class="call-btn">📞</div>
+      </div>
+    </div>
+
+    <div style="height: 40px;"></div>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+  const screens = ['splash','home','detail','order','tracking'];
+  
+  function goTo(id) {
+    screens.forEach((s, i) => {
+      const el = document.getElementById(s);
+      const dot = document.querySelectorAll('.screen-dot')[i];
+      if (s === id) {
+        el.classList.add('active');
+        el.classList.add('animating');
+        dot.classList.add('active');
+        el.scrollTop = 0;
+        setTimeout(() => el.classList.remove('animating'), 400);
+      } else {
+        el.classList.remove('active');
+        el.classList.remove('animating');
+        dot.classList.remove('active');
+      }
+    });
+  }
+
+  function setCat(el) {
+    document.querySelectorAll('.cat-pill').forEach(p => {
+      p.classList.remove('active');
+      p.classList.add('inactive');
+    });
+    el.classList.add('active');
+    el.classList.remove('inactive');
+  }
+
+  function selectSize(el) {
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function switchTab(el) {
+    document.querySelectorAll('.order-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>
