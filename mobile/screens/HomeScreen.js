@@ -7,6 +7,8 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  TextInput,
+  Alert,
 } from 'react-native';
 import { COLORS } from '../theme/colors';
 import { useApp } from '../context/AppContext';
@@ -23,6 +25,8 @@ const CATEGORIES = ['All Coffee', 'Machiato', 'Latte', 'Americano', 'Espresso'];
 export function HomeScreen({ navigation }) {
   const { selectCoffee } = useApp();
 
+  const [search, setSearch] = React.useState('');
+
   const openDetailForCoffee = (coffee) => {
     selectCoffee({
       ...coffee,
@@ -30,6 +34,10 @@ export function HomeScreen({ navigation }) {
     });
     navigation.navigate('Detail');
   };
+
+  const filteredCoffees = COFFEES.filter((c) =>
+    c.name.toLowerCase().includes(search.trim().toLowerCase())
+  );
 
   return (
     <SafeAreaView style={styles.root}>
@@ -45,11 +53,26 @@ export function HomeScreen({ navigation }) {
       <View style={styles.searchRow}>
         <View style={styles.searchBox}>
           <Text style={styles.searchIcon}>🔍</Text>
-          <Text style={styles.searchPlaceholder}>Search coffee</Text>
+          <TextInput
+            style={styles.searchInput}
+            value={search}
+            onChangeText={setSearch}
+            placeholder="Search coffee"
+            placeholderTextColor="rgba(255,255,255,0.6)"
+          />
         </View>
-        <View style={styles.filterBtn}>
+        <TouchableOpacity
+          style={styles.filterBtn}
+          activeOpacity={0.7}
+          onPress={() =>
+            Alert.alert(
+              'Filters',
+              'Les filtres détaillés seront ajoutés plus tard, pour l’instant seul la recherche par nom est active.'
+            )
+          }
+        >
           <Text style={{ color: 'white' }}>☰</Text>
-        </View>
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity
@@ -87,7 +110,7 @@ export function HomeScreen({ navigation }) {
           </ScrollView>
 
           <View style={styles.grid}>
-            {COFFEES.map((item) => (
+            {filteredCoffees.map((item) => (
               <TouchableOpacity
                 key={item.name}
                 style={styles.card}
@@ -170,6 +193,11 @@ const styles = StyleSheet.create({
   },
   searchPlaceholder: {
     color: 'rgba(255,255,255,0.6)',
+    fontSize: 14,
+  },
+  searchInput: {
+    flex: 1,
+    color: 'white',
     fontSize: 14,
   },
   filterBtn: {

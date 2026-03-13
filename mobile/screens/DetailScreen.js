@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { useApp } from '../context/AppContext';
 
 export function DetailScreen({ navigation }) {
   const { currentCoffee } = useApp();
+  const [selectedSize, setSelectedSize] = useState('M');
 
   return (
     <SafeAreaView style={styles.root}>
@@ -70,14 +71,23 @@ export function DetailScreen({ navigation }) {
           <Text style={styles.sectionTitle}>Size</Text>
           <View style={styles.sizeRow}>
             {['S', 'M', 'L'].map((s, i) => (
-              <View
+              <TouchableOpacity
                 key={s}
-                style={[styles.sizeBtn, i === 1 ? styles.sizeBtnActive : null]}
+                style={[
+                  styles.sizeBtn,
+                  selectedSize === s ? styles.sizeBtnActive : null,
+                ]}
+                activeOpacity={0.7}
+                onPress={() => setSelectedSize(s)}
               >
-                <Text style={i === 1 ? styles.sizeTextActive : styles.sizeText}>
+                <Text
+                  style={
+                    selectedSize === s ? styles.sizeTextActive : styles.sizeText
+                  }
+                >
                   {s}
                 </Text>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>

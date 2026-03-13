@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { COLORS } from '../theme/colors';
 import { PrimaryButton } from '../components/PrimaryButton';
@@ -20,7 +21,31 @@ export function OrderScreen({ navigation }) {
     quantity,
     incrementQuantity,
     decrementQuantity,
+    setAddress,
+    setNote,
   } = useApp();
+
+  const [editAddressMode, setEditAddressMode] = React.useState(false);
+  const [editNoteMode, setEditNoteMode] = React.useState(false);
+  const [draftAddress, setDraftAddress] = React.useState(address);
+  const [draftNote, setDraftNote] = React.useState(note ?? '');
+
+  const toggleEditAddress = () => {
+    setDraftAddress(address);
+    setEditAddressMode((v) => !v);
+  };
+
+  const toggleEditNote = () => {
+    setDraftNote(note ?? '');
+    setEditNoteMode((v) => !v);
+  };
+
+  const saveEdits = () => {
+    setAddress(draftAddress.trim() || address);
+    setNote(draftNote.trim());
+    setEditAddressMode(false);
+    setEditNoteMode(false);
+  };
 
   const itemPrice = currentCoffee.price ?? 4.53;
   const subtotal = itemPrice * quantity;
@@ -48,13 +73,51 @@ export function OrderScreen({ navigation }) {
           <Text style={styles.addrName}>Jl. Kpg Sutoyo</Text>
           <Text style={styles.addrDetail}>{address}</Text>
           <View style={styles.addrActions}>
-            <View style={styles.addrBtn}>
+            <TouchableOpacity
+              style={styles.addrBtn}
+              onPress={toggleEditAddress}
+              activeOpacity={0.7}
+            >
               <Text>✏️ Edit Address</Text>
-            </View>
-            <View style={styles.addrBtn}>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.addrBtn}
+              onPress={toggleEditNote}
+              activeOpacity={0.7}
+            >
               <Text>📝 Add Note</Text>
-            </View>
+            </TouchableOpacity>
           </View>
+
+          {editAddressMode && (
+            <TextInput
+              style={styles.addrInput}
+              value={draftAddress}
+              onChangeText={setDraftAddress}
+              placeholder="Enter delivery address"
+              multiline
+            />
+          )}
+
+          {editNoteMode && (
+            <TextInput
+              style={styles.noteInput}
+              value={draftNote}
+              onChangeText={setDraftNote}
+              placeholder="Add a note for the rider"
+              multiline
+            />
+          )}
+
+          {(editAddressMode || editNoteMode) && (
+            <TouchableOpacity
+              style={[styles.addrBtn, { marginTop: 10, alignSelf: 'flex-start' }]}
+              onPress={saveEdits}
+              activeOpacity={0.7}
+            >
+              <Text style={{ fontWeight: '600' }}>Save</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={styles.itemRow}>
@@ -168,6 +231,26 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 6,
+  },
+  addrInput: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: COLORS.gray,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 13,
+    color: COLORS.dark,
+  },
+  noteInput: {
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: COLORS.gray,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 13,
+    color: COLORS.dark,
   },
   itemRow: {
     backgroundColor: COLORS.white,

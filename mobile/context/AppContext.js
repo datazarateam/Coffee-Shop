@@ -60,8 +60,10 @@ export function AppProvider({ children }) {
 
   const selectCoffee = (coffee) => {
     setCurrentCoffee({
-      ...DEFAULT_COFFEE,
-      ...coffee,
+      name: coffee.name ?? DEFAULT_COFFEE.name,
+      sub: coffee.sub ?? DEFAULT_COFFEE.sub,
+      emoji: coffee.emoji ?? DEFAULT_COFFEE.emoji,
+      rating: coffee.rating ?? DEFAULT_COFFEE.rating,
       price: parseFloat(coffee.price ?? DEFAULT_COFFEE.price),
     });
     setQuantity(1);
