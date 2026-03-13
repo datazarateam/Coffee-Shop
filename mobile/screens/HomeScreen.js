@@ -6,8 +6,10 @@ import {
   StatusBar,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import { COLORS } from '../theme/colors';
+import { useApp } from '../context/AppContext';
 
 const COFFEES = [
   { name: 'Caffe Mocha', sub: 'Deep Foam', price: '4.53', emoji: '☕', rating: '4.8' },
@@ -19,6 +21,16 @@ const COFFEES = [
 const CATEGORIES = ['All Coffee', 'Machiato', 'Latte', 'Americano', 'Espresso'];
 
 export function HomeScreen({ navigation }) {
+  const { selectCoffee } = useApp();
+
+  const openDetailForCoffee = (coffee) => {
+    selectCoffee({
+      ...coffee,
+      price: parseFloat(coffee.price),
+    });
+    navigation.navigate('Detail');
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <StatusBar barStyle="light-content" />
@@ -40,14 +52,15 @@ export function HomeScreen({ navigation }) {
         </View>
       </View>
 
-      <View
+      <TouchableOpacity
         style={styles.promoBanner}
-        onTouchEnd={() => navigation.navigate('Detail')}
+        onPress={() => openDetailForCoffee(COFFEES[0])}
+        activeOpacity={0.8}
       >
         <Text style={styles.promoBadge}>Promo</Text>
         <Text style={styles.promoTitle}>Buy one get one FREE</Text>
         <Text style={styles.promoCup}>☕</Text>
-      </View>
+      </TouchableOpacity>
 
       <View style={styles.body}>
         <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
@@ -75,10 +88,11 @@ export function HomeScreen({ navigation }) {
 
           <View style={styles.grid}>
             {COFFEES.map((item) => (
-              <View
+              <TouchableOpacity
                 key={item.name}
                 style={styles.card}
-                onTouchEnd={() => navigation.navigate('Detail')}
+                activeOpacity={0.8}
+                onPress={() => openDetailForCoffee(item)}
               >
                 <View style={styles.cardImage}>
                   <Text style={styles.cardEmoji}>{item.emoji}</Text>
@@ -97,7 +111,7 @@ export function HomeScreen({ navigation }) {
                     </View>
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </ScrollView>

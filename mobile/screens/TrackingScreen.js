@@ -6,18 +6,26 @@ import {
   StatusBar,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import { COLORS } from '../theme/colors';
+import { useApp } from '../context/AppContext';
 
 export function TrackingScreen({ navigation }) {
+  const { address, currentCoffee } = useApp();
+
   return (
     <SafeAreaView style={styles.root}>
       <StatusBar barStyle="dark-content" />
       <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 40 }}>
         <View style={styles.headerRow}>
-          <View style={styles.circleBtn} onTouchEnd={() => navigation.goBack()}>
+          <TouchableOpacity
+            style={styles.circleBtn}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
             <Text>←</Text>
-          </View>
+          </TouchableOpacity>
           <Text style={styles.headerTitle}>Tracking Order</Text>
           <View style={{ width: 40 }} />
         </View>
@@ -28,7 +36,7 @@ export function TrackingScreen({ navigation }) {
 
         <View style={styles.card}>
           <Text style={styles.time}>10 minutes left</Text>
-          <Text style={styles.dest}>Delivery to Jl. Kpg Sutoyo</Text>
+          <Text style={styles.dest}>Delivery to {address}</Text>
           <View style={styles.progressBar}>
             <View style={styles.progressFill} />
           </View>
@@ -60,7 +68,9 @@ export function TrackingScreen({ navigation }) {
             <View style={styles.statusRow}>
               <View style={[styles.statusDot, { backgroundColor: COLORS.gray }]} />
               <View>
-                <Text style={[styles.statusTitle, { opacity: 0.5 }]}>Order received</Text>
+                <Text style={[styles.statusTitle, { opacity: 0.5 }]}>
+                  Order received – {currentCoffee.name}
+                </Text>
                 <Text style={[styles.statusSub, { opacity: 0.5 }]}>
                   Enjoy your coffee!
                 </Text>

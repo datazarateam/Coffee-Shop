@@ -6,19 +6,39 @@ import {
   StatusBar,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import { COLORS } from '../theme/colors';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { useApp } from '../context/AppContext';
 
 export function OrderScreen({ navigation }) {
+  const {
+    address,
+    note,
+    currentCoffee,
+    quantity,
+    incrementQuantity,
+    decrementQuantity,
+  } = useApp();
+
+  const itemPrice = currentCoffee.price ?? 4.53;
+  const subtotal = itemPrice * quantity;
+  const delivery = 1.0;
+  const total = subtotal + delivery;
+
   return (
     <SafeAreaView style={styles.root}>
       <StatusBar barStyle="dark-content" />
       <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 40 }}>
         <View style={styles.headerRow}>
-          <View style={styles.circleBtn} onTouchEnd={() => navigation.goBack()}>
+          <TouchableOpacity
+            style={styles.circleBtn}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
             <Text>←</Text>
-          </View>
+          </TouchableOpacity>
           <Text style={styles.headerTitle}>Order</Text>
           <View style={{ width: 40 }} />
         </View>
@@ -26,9 +46,7 @@ export function OrderScreen({ navigation }) {
         <Text style={styles.sectionTitle}>Delivery Address</Text>
         <View style={styles.addressCard}>
           <Text style={styles.addrName}>Jl. Kpg Sutoyo</Text>
-          <Text style={styles.addrDetail}>
-            Kpg. Sutoyo No.620, Bilzen, Tanjungbalai
-          </Text>
+          <Text style={styles.addrDetail}>{address}</Text>
           <View style={styles.addrActions}>
             <View style={styles.addrBtn}>
               <Text>✏️ Edit Address</Text>
@@ -44,13 +62,17 @@ export function OrderScreen({ navigation }) {
             <Text style={{ fontSize: 26 }}>☕</Text>
           </View>
           <View style={styles.itemInfo}>
-            <Text style={styles.itemTitle}>Caffe Mocha</Text>
-            <Text style={styles.itemSub}>Deep Foam</Text>
+            <Text style={styles.itemTitle}>{currentCoffee.name}</Text>
+            <Text style={styles.itemSub}>{currentCoffee.sub}</Text>
           </View>
           <View style={styles.qtyRow}>
-            <Text style={styles.qtyMinus}>−</Text>
-            <Text style={styles.qtyValue}>1</Text>
-            <Text style={styles.qtyPlus}>+</Text>
+            <TouchableOpacity onPress={decrementQuantity} activeOpacity={0.7}>
+              <Text style={styles.qtyMinus}>−</Text>
+            </TouchableOpacity>
+            <Text style={styles.qtyValue}>{quantity}</Text>
+            <TouchableOpacity onPress={incrementQuantity} activeOpacity={0.7}>
+              <Text style={styles.qtyPlus}>+</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -58,13 +80,13 @@ export function OrderScreen({ navigation }) {
           <Text style={styles.paymentTitle}>Payment Summary</Text>
           <View style={styles.paymentRow}>
             <Text style={styles.paymentLabel}>Price</Text>
-            <Text style={styles.paymentValue}>$ 4.53</Text>
+            <Text style={styles.paymentValue}>$ {subtotal.toFixed(2)}</Text>
           </View>
           <View style={styles.paymentRow}>
             <Text style={styles.paymentLabel}>Delivery Fee</Text>
             <Text>
               <Text style={styles.paymentStrike}>$ 2.0 </Text>
-              <Text style={styles.paymentDiscount}>$ 1.0</Text>
+              <Text style={styles.paymentDiscount}>$ {delivery.toFixed(1)}</Text>
             </Text>
           </View>
         </View>
@@ -75,7 +97,7 @@ export function OrderScreen({ navigation }) {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.payMethod}>Cash/Wallet</Text>
-            <Text style={styles.payAmount}>$ 5.53</Text>
+            <Text style={styles.payAmount}>$ {total.toFixed(2)}</Text>
           </View>
           <Text style={{ color: COLORS.textLight }}>⌄</Text>
         </View>

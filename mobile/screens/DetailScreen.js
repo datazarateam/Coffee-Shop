@@ -6,19 +6,27 @@ import {
   StatusBar,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import { COLORS } from '../theme/colors';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { useApp } from '../context/AppContext';
 
 export function DetailScreen({ navigation }) {
+  const { currentCoffee } = useApp();
+
   return (
     <SafeAreaView style={styles.root}>
       <StatusBar barStyle="dark-content" />
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={styles.header}>
-          <View style={styles.circleBtn} onTouchEnd={() => navigation.goBack()}>
+          <TouchableOpacity
+            style={styles.circleBtn}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
             <Text>←</Text>
-          </View>
+          </TouchableOpacity>
           <Text style={styles.headerTitle}>Detail</Text>
           <View style={styles.circleBtn}>
             <Text>♡</Text>
@@ -30,8 +38,8 @@ export function DetailScreen({ navigation }) {
         </View>
 
         <View style={styles.body}>
-          <Text style={styles.name}>Caffe Mocha</Text>
-          <Text style={styles.sub}>Ice/Hot</Text>
+          <Text style={styles.name}>{currentCoffee.name}</Text>
+          <Text style={styles.sub}>{currentCoffee.sub}</Text>
 
           <View style={styles.meta}>
             <View style={styles.ratingRow}>
